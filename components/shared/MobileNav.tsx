@@ -1,3 +1,4 @@
+'use client';
 import {
     Sheet,
     SheetContent,
@@ -10,6 +11,7 @@ import { navLinks } from "@/constants"
 import { SignedIn, UserButton } from "@clerk/nextjs"
 import Image from "next/image"
 import Link from "next/link"
+import { usePathname } from "next/navigation"
 
 
 const MobileNav = () => {
