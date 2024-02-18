@@ -8,10 +8,11 @@ import {
     SheetTrigger,
 } from "@/components/ui/sheet"
 import { navLinks } from "@/constants"
-import { SignedIn, UserButton } from "@clerk/nextjs"
+import { SignedIn, SignedOut, UserButton } from "@clerk/nextjs"
 import Image from "next/image"
 import Link from "next/link"
 import { usePathname } from "next/navigation"
+import { Button } from "../ui/button";
 
 
 const MobileNav = () => {
@@ -51,14 +52,17 @@ const MobileNav = () => {
                                             height={23}
                                         />
 
-                                        <ul className='sidebar-nav_elements'>
-                                            {navLinks.slice(0, 6).map((link) => {
+                                        <ul className='header-nav_elements'>
+                                            {navLinks.map((link) => {
                                                 const isActive = link.route === pathname
 
                                                 return (
-                                                    <li key={link.route} className={`sidebar-nav_element group ${isActive ? 'bg-purple-gradient text-white' : 'text-gray-700'
-                                                        }`}>
-                                                        <Link className='sidebar-link' href={link.route} >
+                                                    <li 
+                                                        className={`${isActive && 'gradient-text'} p-18 flex whitespace-nowrap text-dark-700`}
+                                                    
+                                                        key={link.route} 
+                                                    >
+                                                        <Link className='sidebar-link cursor-pointer' href={link.route} >
                                                             <Image
                                                                 src={link.icon}
                                                                 alt='logo'
@@ -80,6 +84,12 @@ const MobileNav = () => {
                         {/* </div> */}
 
                     </SignedIn>
+
+                    <SignedOut>
+                        <Button asChild className='button bg-purple-gradient bg-cover'>
+                            <Link href="/sign-in">Login</Link>
+                        </Button>
+                    </SignedOut>
                 </nav>
             </Link>
         </header>
