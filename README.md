@@ -38,6 +38,7 @@ Check out our [Next.js deployment documentation](https://nextjs.org/docs/deploym
 ----
 
 ## Libraries
+- radix-ui
 - zod
 - mongo
 - mongoose
