@@ -43,3 +43,18 @@ Check out our [Next.js deployment documentation](https://nextjs.org/docs/deploym
 - mongo
 - mongoose
 - clerk
+
+
+# install nodejs 18
+
+install nvm
+```curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.1/install.sh | bash```
+
+restart terminal
+```nvm install 18
+nvm use 18```
+
+localtunnel using serveo.net
+https://serveo.net/
+ssh -R incubo:80:localhost:8888 serveo.net
+https://7560072fe4ce8bbdf48745bba65af22b.serveo.net
