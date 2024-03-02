@@ -65,8 +65,15 @@ const TransformationForm = ({ action, data = null, userId, type, creditBalance }
   const onSelectFieldHandler = (
     value: string,
     onChangeField: (value: string) => void) => {
-
+      
   }
+
+  const onInputChangeHandler = (
+    fieldName: string,
+    value: string,
+    type: string,
+    onChange
+  )
 
   return (
     <Form {...form}>
@@ -120,7 +127,13 @@ const TransformationForm = ({ action, data = null, userId, type, creditBalance }
               render={({ field }) => (
                 <Input 
                   value={field.value}
-                  className="input-field" 
+                  className="input-field"
+                  onChange={(e) => onInputChangeHandler(
+                    'prompt',
+                    e.target.value,
+                    type,
+                    field.onChange
+                  )}
                 />
               )}
             />
