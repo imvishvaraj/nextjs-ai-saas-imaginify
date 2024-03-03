@@ -1,7 +1,11 @@
+'use client';
+
 import React from "react";
 import { useToast } from "../ui/use-toast";
-import { CldUploadWidget } from "next-cloudinary";
+import { CldImage, CldUploadWidget } from "next-cloudinary";
 import Image from "next/image";
+import { dataUrl, getImageSize } from "@/lib/utils";
+import { PlaceholderValue } from "next/dist/shared/lib/get-img-props";
 
 type MediaUploaderProps = {
     onValueChange: (value: string) => void;
@@ -14,12 +18,23 @@ type MediaUploaderProps = {
 const MediaUploader = ({
     onValueChange,
     setImage,
+    image,
     publicId,
     type
 }: MediaUploaderProps) => {
     const { toast } = useToast();
 
     const onUploadSuccessHandler = (result: any) => {
+        setImage((prevStage: any) => ({
+            ...prevStage,
+            publicId: result?.info?.public_id,
+            width: result?.info?.width,
+            height: result?.info?.height,
+            secureUrl: result?.info?.secure_url
+        }))
+
+        onValueChange(result?.info?.public_id);
+
         toast({
             title: 'Image uploaded successfully',
             description: '1 credit deducted from your account.',
@@ -55,7 +70,18 @@ const MediaUploader = ({
 
                     {publicId ? (
                         <>
-                            HERE IS THE IMAGE
+                            <div className="cursor-pointer overflow-hidden rounded-[10px]">
+                                <CldImage 
+                                    width={getImageSize(type, image, "width")}
+                                    height={getImageSize(type, image, "height")}
+                                    src={publicId}
+                                    alt="image"
+                                    sizes={"(max-width: 768px) 100vw, 50vw"}
+                                    placeholder={dataUrl as PlaceholderValue}
+                                    className="media-uploader_CldImage"
+                                />
+
+                            </div>
                         </>
                     ): (
                         <div className="media-uploader_cta" onClick={() => open()}>
