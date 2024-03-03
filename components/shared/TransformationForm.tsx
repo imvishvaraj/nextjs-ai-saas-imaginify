@@ -23,8 +23,9 @@ import {
 import { Input } from "@/components/ui/input"
 import { aspectRatioOptions, defaultValues, transformationTypes } from "@/constants"
 import { CustomField } from "./CustomField"
-import { useState } from "react"
-import { AspectRatioKey } from "@/lib/utils"
+import { useState, useTransition } from "react"
+import { AspectRatioKey, debounce, deepMergeObjects } from "@/lib/utils"
+import { updateCredits } from "@/lib/actions/user.actions"
 
 
 export const formSchema = z.object({
@@ -35,11 +36,15 @@ export const formSchema = z.object({
   publicId: z.string(),
 })
 
-const TransformationForm = ({ action, data = null, userId, type, creditBalance }:
+const TransformationForm = ({ action, data = null, userId, type, creditBalance, config = null }:
   TransformationFormProps) => {
   const transformationType = transformationTypes[type];
   const [Image, setImage] = useState(data);
   const [newTransformation, setNewTransformation] = useState<Transformations | null>(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isTransforming, setIsTransforming] = useState(false);
+  const [transformtationConfig, setTransformationConfig] = useState(config);
+  const [isPending, startTransition] = useTransition();
 
   const initialValues = data && action === 'Update' ? {
     title: data?.title,
@@ -65,15 +70,51 @@ const TransformationForm = ({ action, data = null, userId, type, creditBalance }
   const onSelectFieldHandler = (
     value: string,
     onChangeField: (value: string) => void) => {
+      const imageSize = aspectRatioOptions[value as AspectRatioKey];
       
+      setImage((prevState: any) => ({
+        ...prevState,
+        aspectRation: imageSize.aspectRatio,
+        width: imageSize.width,
+        height: imageSize.height,
+      }))
+
+      setNewTransformation(transformationType.config)
+
+      return onChangeField(value)
   }
 
   const onInputChangeHandler = (
     fieldName: string,
     value: string,
     type: string,
-    onChange
-  )
+    onChangeField: (value: string) => void
+  ) => {
+    debounce(() => {
+      setNewTransformation((prevState: any) => ({
+        ...prevState,
+        [type]: {
+          ...prevState?.[type],
+          [fieldName === 'prompt' ? 'prompt': 'toColor']: value
+        }
+      }))
+    }, 1000);
+  }
+
+  // TODO: Return to updateCredits
+  const onTransformHandler = async () => {
+    setIsTransforming(true);
+
+    setTransformationConfig(
+      deepMergeObjects(newTransformation, transformtationConfig)
+    )
+
+    setNewTransformation(null);
+
+    startTransition(async () => {
+      // await updateCredits(userId, creditFee)
+    })
+  }
 
   return (
     <Form {...form}>
@@ -138,8 +179,49 @@ const TransformationForm = ({ action, data = null, userId, type, creditBalance }
               )}
             />
 
+            { type === 'recolor' && (
+              <CustomField 
+                control={form.control}
+                name='color'
+                formLabel="Replacement Color"
+                className="w-full"
+                render={({ field }) =>(
+                  <Input 
+                    value={field.value}
+                    className="input-field"
+                    onChange={(e) => onInputChangeHandler(
+                      'color',
+                      e.target.value,
+                      'recolor',
+                      field.onChange
+                    )}
+                  />
+                )}
+              />
+            )}
+
           </div>
         )}
+
+        <div className="flex flex-col gap-4">
+          <Button
+            type="button"
+            className="submit-button capti"
+            disabled={isTransforming || newTransformation === null} 
+            onClick={onTransformHandler}
+          >
+            {isTransforming ? 'Transforming...' : 'Apply Transformation'}
+          </Button>
+          <Button
+            type="submit"
+            className="submit-button capti"
+            disabled={isSubmitting} 
+          >
+            {isSubmitting ? 'Submitting...' : 'Save Image'}
+          </Button>
+
+        </div>
+
       </form>
     </Form>
   )
