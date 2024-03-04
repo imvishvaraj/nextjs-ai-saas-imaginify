@@ -76,6 +76,11 @@ export async function updateCredits(userId: string, creditFee: number) {
   try {
     await connectToDatabase();
 
+    const user = await User.findById(userId);
+    if (!user) throw new Error("User not found");
+
+    if (user.creditBalance + creditFee < 0) throw new Error("Insufficient credits");
+
     const updatedUserCredits = await User.findOneAndUpdate(
       { _id: userId },
       { $inc: { creditBalance: creditFee } },

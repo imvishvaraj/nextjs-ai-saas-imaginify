@@ -1,5 +1,6 @@
 import { dataUrl, debounce, getImageSize } from '@/lib/utils'
 import { CldImage } from 'next-cloudinary'
+import { PlaceholderValue } from 'next/dist/shared/lib/get-img-props'
 import Image from 'next/image'
 import React from 'react'
 
@@ -8,8 +9,8 @@ const TransformedImage = ({
     type,
     title,
     isTransforming,
-    setIsTranforming,
-    tranformationConfig,
+    setIsTransforming,
+    transformationConfig,
     hasDownload = false
 }: TransformedImageProps) => {
     const downloadHandler = () => { }
@@ -36,7 +37,7 @@ const TransformedImage = ({
                 )}
             </div>
 
-            {image?.publicId && tranformationConfig ? (
+            {image?.publicId && transformationConfig ? (
                 <div className='relative'>
                     <CldImage
                         width={getImageSize(type, image, "width")}
@@ -47,14 +48,14 @@ const TransformedImage = ({
                         placeholder={dataUrl as PlaceholderValue}
                         className="transformed-image"
                         onLoad={() => {
-                            setIsTranforming && setIsTranforming(false);
+                            setIsTransforming && setIsTransforming(false);
                         }}
                         onError={() => {
                             debounce(() => {
-                                setIsTranforming && setIsTranforming(false);
+                                setIsTransforming && setIsTransforming(false);
                             }, 8000)
                         }}
-                        {...tranformationConfig }
+                        {...transformationConfig }
                     />
 
                     {isTransforming && (
