@@ -9,7 +9,7 @@ export interface IImage extends Document {
     width?: number; // Optional since width is not marked as required
     height?: number; // Optional since height is not marked as required
     config?: any; // Object type in Schema, but could be more specific if the shape of config is known
-    transformationURL?: URL; // Optional since transformationURL is not marked as required
+    transformationURL?: string; // Optional since transformationURL is not marked as required
     aspectRatio?: string; // Optional since aspectRatio is not marked as required
     color?: string; // Optional since color is not marked as required
     prompt?: string; // Optional since prompt is not marked as required
@@ -30,7 +30,7 @@ const ImageSchema = new Schema({
     width: { type: Number },
     height: { type: Number },
     config: { type: Object },
-    transformationURL: { type: URL },
+    transformationURL: { type: String },
     aspectRatio: { type: String },
     color: { type: String },
     prompt: { type: String },
