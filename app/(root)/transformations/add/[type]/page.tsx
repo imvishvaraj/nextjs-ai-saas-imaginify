@@ -13,6 +13,7 @@ const AddTransformationTypePage = async ({ params: { type } }:
   if (!userId) redirect('sign-in')
 
   const user = await getUserById(userId);
+  console.log('inside transformation type page', user)
 
   return (
     <>
@@ -24,7 +25,7 @@ const AddTransformationTypePage = async ({ params: { type } }:
       <section className='mt-10'>
         <TransformationForm
           action="Add"
-          userId={user.id}
+          userId={user._id}
           type={transformationType.type as TransformationTypeKey}
           creditBalance={user.creditBalance}
         />

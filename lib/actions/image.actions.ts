@@ -19,8 +19,11 @@ const populateUser = (query: any) => query.pupulate({
 export async function addImage({ image, userId, path }: AddImageParams) {
     try {
         await connectToDatabase();
+        console.log("inside addImage. connectedtodb")
+        console.log('user id: ', userId)
 
         const author = await User.findById(userId)
+        console.log("author", author)
 
         if (!author) {
             throw new Error("User not found");
@@ -30,6 +33,7 @@ export async function addImage({ image, userId, path }: AddImageParams) {
             ...image,
             author: author._id,
         })
+        console.log("created new image", newImage)
 
         revalidatePath(path);
 
