@@ -118,7 +118,7 @@ export async function getAllImages({ limit = 9, page = 1, searchQuery = ''}: {
             secure: true,
         })
         
-        let expression = 'folder=vish_imaginify';
+        let expression = 'folder=imaginify';
 
         if (searchQuery) {
             expression += ` AND ${searchQuery}`
@@ -128,9 +128,10 @@ export async function getAllImages({ limit = 9, page = 1, searchQuery = ''}: {
             .expression(expression)
             .execute();
         
-        console.log("all images resources: ", resources)
+        // console.log("all images resources: ", resources)
         
         const resourceIds = resources.map((resource: any) => resource.public_id)
+        // console.log("all images resourceIds: ", resourceIds)
 
         let query = {};
 
@@ -142,14 +143,24 @@ export async function getAllImages({ limit = 9, page = 1, searchQuery = ''}: {
             }
         }
 
-        console.log("all images query: ", query)
+        // console.log("all images query: ", query)
 
         const skipAmount = (Number(page) -1) * limit;
 
-        const images =  await populateUser(Image.find(query))
+        const res = Image.find(query).populate({
+            path: "author",
+            model: User,
+            select: '_id firstName lastName'        })
+        // console.log('res', res)
+
+        // const res = await 
+        
+        const images =  await res
             .sort({ updatedAt: -1 })
             .skip(skipAmount)
-            .limit(limit);;
+            .limit(limit);
+        
+        
         
         const totalImages = await Image.find(query).countDocuments();
         const savedImages = await Image.find().countDocuments();
